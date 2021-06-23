@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreChecklistGroupRequest extends FormRequest
+class UpdatePageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,8 @@ class StoreChecklistGroupRequest extends FormRequest
     public function rules()
     {
         return [
-            // 'name' => ['required', 'unique:checklist_groups']
-            'name' => 'required|min:1|unique:checklist_groups,name,NULL,id,deleted_at,NULL'
+            'title'=>'required',
+            'content'=>'required',
         ];
     }
 }
