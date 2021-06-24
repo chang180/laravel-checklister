@@ -21,8 +21,8 @@
                         <div class="card">
                             <div class="card-header">{{ __('Edit Page') }}</div>
                             <div class="card-body">
-                                @if(session('message'))
-                                <div class="alert alert-info">{{ session('message')}} </div>
+                                @if (session('message'))
+                                    <div class="alert alert-info">{{ session('message') }} </div>
                                 @endif
                                 <div class="row">
                                     <div class="col-sm-12">
@@ -51,11 +51,5 @@
     </div>
 @endsection
 @section('scripts')
-    <script>
-        ClassicEditor
-            .create(document.querySelector('#task-textarea'))
-            .catch(error => {
-                console.error(error);
-            });
-    </script>
+    @include('admin.ckeditor')
 @endsection
