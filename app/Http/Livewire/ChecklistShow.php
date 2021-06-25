@@ -11,12 +11,13 @@ class ChecklistShow extends Component
     public $opened_tasks = [];
     public $completed_tasks = [];
 
-    public function mount(){
-        $this->completed_tasks = Task::where('checklist_id',$this->checklist->id)
-        ->where('user_id',auth()->id())
-        ->whereNotNull('completed_at')
-        ->pluck('task_id')
-        ->toArray();
+    public function mount()
+    {
+        $this->completed_tasks = Task::where('checklist_id', $this->checklist->id)
+            ->where('user_id', auth()->id())
+            ->whereNotNull('completed_at')
+            ->pluck('task_id')
+            ->toArray();
     }
 
     public function render()
@@ -32,22 +33,29 @@ class ChecklistShow extends Component
             $this->opened_tasks[] = $task_id;
         }
     }
-    
-    public function complete_task($task_id){
+
+    public function complete_task($task_id)
+    {
         $task = Task::find($task_id);
-        if($task){
-            $user_task = Task::where('task_id',$task_id)->first();
-            if($user_task){
-                if(is_null($user_task->completed_at)){
-                    $user_task->update(['complete_at'=>now()]);
+        if ($task) {
+            $user_task = Task::where('task_id', $task_id)->first();
+            if ($user_task) {
+                if (is_null($user_task->completed_at)) {
+                    $user_task->update(['complete_at' => now()]);
                 }
-            }else{
+            } else {
                 $user_task = $task->replicate();
                 $user_task['completed_at'] = now();
                 $user_task['user_id'] = auth()->id();
                 $user_task['task_id'] = $task_id;
                 $user_task->save();
             }
+
+            $this->emit(
+                'task_complete',
+                'task_id',
+                $task->checklist_id
+            );
         }
     }
 }
