@@ -76,7 +76,7 @@
         @else
             @foreach ($user_tasks_menu as $key => $user_task_menu)
                 <li class="c-sidebar-nav-item">
-                    <a href="" class="c-sidebar-nav-link">
+                    <a href="{{route('user.tasklist',$key)}} " class="c-sidebar-nav-link">
                         <svg class="c-sidebar-nav-icon">
                             <use
                                 xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-' . $user_task_menu['icon']) }} ">
