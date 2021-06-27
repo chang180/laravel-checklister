@@ -25,7 +25,8 @@
                         @endforeach
                         <li class="c-sidebar-nav-item">
                             <a class="c-sidebar-nav-link"
-                                href="{{ route('admin.checklist_groups.checklists.create', $group) }}" style="padding: 1rem .5rem .5rem 76px">
+                                href="{{ route('admin.checklist_groups.checklists.create', $group) }}"
+                                style="padding: 1rem .5rem .5rem 76px">
                                 <svg class="c-sidebar-nav-icon">
                                     <use
                                         xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-library-add') }}">
@@ -33,7 +34,8 @@
                                 </svg>
                                 {{ __('New Checklist') }}</a>
                             <a class="c-sidebar-nav-link"
-                                href="{{ route('admin.checklist_groups.edit', $group->id) }}" style="padding: .5rem .5rem .5rem 76px">
+                                href="{{ route('admin.checklist_groups.edit', $group->id) }}"
+                                style="padding: .5rem .5rem .5rem 76px">
                                 <svg class="c-sidebar-nav-icon">
                                     <use
                                         xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-folder-open') }}">
@@ -72,31 +74,47 @@
             </li>
 
         @else
+            @foreach ($user_tasks_menu as $key => $user_task_menu)
+                <li class="c-sidebar-nav-item">
+                    <a href="" class="c-sidebar-nav-link">
+                        <svg class="c-sidebar-nav-icon">
+                            <use
+                                xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-' . $user_task_menu['icon']) }} ">
+                            </use>
+                        </svg>
+                        {{ $user_task_menu['name']}}
+                        @livewire('user-tasks-counter',[
+                            'task_type' => $key,
+                            'tasks_count' => $user_task_menu['tasks_count'],
+                        ])
+                    </a>
+                </li>
+            @endforeach
+
             @foreach ($user_menu as $group)
                 <li class="c-sidebar-nav-title">{{ $group['name'] }}
-                    @if($group['is_new']) 
-                    <span class="badge badge-info">NEW</span>
+                    @if ($group['is_new'])
+                        <span class="badge badge-info">NEW</span>
                     @elseif($group['is_updated'])
-                    <span class="badge badge-success">UPD</span>
+                        <span class="badge badge-success">UPD</span>
                     @endif
                 </li>
                 @foreach ($group['checklists'] as $checklist)
                     <li class="c-sidebar-nav-item">
-                        <a class="c-sidebar-nav-link"
-                            href="{{ route('user.checklists.show', [$checklist['id']]) }}">
+                        <a class="c-sidebar-nav-link" href="{{ route('user.checklists.show', [$checklist['id']]) }}">
                             <svg class="c-sidebar-nav-icon">
                                 <use xlink:href="{{ asset('vendors/@coreui/icons/svg/free.svg#cil-list') }}"></use>
                             </svg>
                             {{ $checklist['name'] }}
                             @livewire('completed-tasks-counter',[
-                                'tasks_count'=> count($checklist['tasks']) ,
-                                'completed_tasks' => count($checklist['user_tasks']) ,
-                                'checklist_id'=>$checklist['id'],
+                            'tasks_count'=> count($checklist['tasks']) ,
+                            'completed_tasks' => count($checklist['user_completed_tasks']) ,
+                            'checklist_id'=>$checklist['id'],
                             ])
-                            @if($checklist['is_new']) 
-                            <span class="badge badge-info">NEW</span>
+                            @if ($checklist['is_new'])
+                                <span class="badge badge-info">NEW</span>
                             @elseif($checklist['is_updated'])
-                            <span class="badge badge-success">UPD</span>
+                                <span class="badge badge-success">UPD</span>
                             @endif
                         </a>
                     </li>
