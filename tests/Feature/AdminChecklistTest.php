@@ -56,7 +56,7 @@ class AdminChecklistTest extends TestCase
         // dd($menu);
 
         // Test DELETING the checklist group
-        $response = $this->actingAS($admin)->delete('admin/checklist_groups/' . $group->id);
+        $response = $this->delete('admin/checklist_groups/' . $group->id);
         $response->assertRedirect('welcome');
 
         $group = ChecklistGroup::where('name', "Updated first group")->first();
@@ -104,7 +104,7 @@ class AdminChecklistTest extends TestCase
         $this->assertTrue($menu['admin_menu']->first()->checklists->contains($checklist));
 
         //Test DELETING the checklist
-        $response = $this->actingAs($admin)->delete($checklist_url . '/' . $checklist->id);
+        $response = $this->delete($checklist_url . '/' . $checklist->id);
         $response->assertRedirect('welcome');
 
         $deleted_checklist = Checklist::where('name', 'Updated checklsit')->first();
@@ -177,7 +177,7 @@ class AdminChecklistTest extends TestCase
         $task1 = Task::factory()->create(['checklist_id' => $checklist->id, 'position' => 1]);
         $task2 = Task::factory()->create(['checklist_id' => $checklist->id, 'position' => 2]);
 
-        $this->actingAs($admin);
+        // $this->actingAs($admin);
         Livewire::test(TaskTable::class, ['checklist' => $checklist])
             ->call('task_up', $task2->id);
 
