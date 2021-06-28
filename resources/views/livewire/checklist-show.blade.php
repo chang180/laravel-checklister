@@ -80,24 +80,24 @@
                     &#9993;
                     &nbsp;
                     @if ($current_task->reminder_at)
-                        {{ __('Reminder to be sent at') }}{{ $current_task->reminder_at->format('M j, Y H:i') }}
+                        {{ __('Reminder to be sent at') }} {{ $current_task->reminder_at->format('M j, Y H:i') }}
                         &nbsp;&nbsp;
-                        <a wire:click.prevent="({{ __('Remove') }} )" href="#"></a>
+                        <a wire:click.prevent="set_reminder({{$current_task->id}} )" href="#">{{ __('Remove') }}</a>
                     @else
-                        <a wire:click.prevent="toggle_reminder" href="#"></a>
-                        {{ __('Remind me') }}
+                        <a wire:click.prevent="toggle_reminder" href="#">
+                        {{ __('Remind me') }}</a>
                         @if ($reminder_opened)
                             <ul>
                                 <li>
-                                    <a wire:click.prevent="set_reminder({{ $current_task->id }},{{ today()->addDay()->toDateString() }})"
+                                    <a wire:click.prevent="set_reminder({{ $current_task->id }},'{{ today()->addDay()->toDateString() }}')"
                                         href="#">
-                                        {{ __('Tomorrow') }}{{ date('H') }}:00
+                                        {{ __('Tomorrow') }} {{ date('H') }}:00
                                     </a>
                                 </li>
                                 <li>
-                                    <a wire:click.prevent="set_reminder({{ $current_task->id }},{{ today()->addWeek()->startOfWeek()->toDateString() }})"
+                                    <a wire:click.prevent="set_reminder({{ $current_task->id }},'{{ today()->addWeek()->startOfWeek()->toDateString() }}')"
                                         href="#">
-                                        {{ __('Next Monday') }}{{ date('H') }}:00
+                                        {{ __('Next Monday') }} {{ date('H') }}:00
                                     </a>
                                 </li>
                                 <li>
@@ -108,7 +108,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <select wire:model="reminder_hour" class="form-control">
-                                                @foreach (rang(0, 23) as $hour)
+                                                @foreach (range(0, 23) as $hour)
                                                     <option value="{{ $hour }} ">{{ $hour }}:00
                                                     </option>
                                                 @endforeach

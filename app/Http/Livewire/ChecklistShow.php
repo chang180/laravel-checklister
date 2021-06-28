@@ -3,6 +3,8 @@
 namespace App\Http\Livewire;
 
 use App\Models\Task;
+use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
 class ChecklistShow extends Component
@@ -35,9 +37,11 @@ class ChecklistShow extends Component
         //     ->toArray();
 
         $this->current_task = NULL;
+        $this->reminder_date = now()->addDay()->toDateString();
+        $this->reminder_hour = now()->hour();
     }
 
-    public function render()
+    public function render(): View
     {
         if (is_null($this->list_type)) {
             $this->list_name = $this->checklist->name;
@@ -59,8 +63,9 @@ class ChecklistShow extends Component
                     $this->user_tasks = Task::where('user_id', auth()->id())->whereNotNull('due_date')->orderBy('due_date')->get();
                     break;
                 default:
-                    $this->list_name = '';
-                    $this->user_tasks = Task::where('user_id', auth()->id())->whereNotNull('added_to_my_day_at')->get();
+                    abort(404);
+                    // $this->list_name = __('My Day');
+                    // $this->user_tasks = Task::where('user_id', auth()->id())->whereNotNull('added_to_my_day_at')->get();
                     break;
             }
             $this->list_tasks = Task::whereIn('id', $this->user_tasks->pluck('task_id'))->get();
@@ -162,12 +167,48 @@ class ChecklistShow extends Component
     public function toggle_note()
     {
         $this->note_opened = !$this->note_opened;
-        $this->not = $this->current_task->note;
+        $this->note = $this->current_task->note;
     }
 
     public function save_note()
     {
         $this->current_task->update(['note' => $this->note]);
         $this->note_opened = FALSE;
+    }
+
+    public function toggle_reminder(){
+        $this->reminder_opened = !$this->reminder_opened;
+    }
+
+    public function set_reminder($task_id,$reminder_date=NULL){
+        $user_task=Task::where('user_id', auth()->id())
+        ->where('id',$task_id)
+        ->first();
+
+        $reminder_at = NULL;
+        if($reminder_date=='custom'){
+            $reminder_at = Carbon::create($this->reminder_date)
+            ->setHour($this->reminder_hour)
+            ->setMinute(0)
+            ->setSecond(0)
+            ->toDateTimeString();
+        }else if(!is_null($reminder_date)){
+            $reminder_at = Carbon::create($reminder_date)
+            ->setHour(now()->hour)
+            ->setMinute(0)
+            ->setSecond(0)
+            ->toDateTimeString();
+        }
+        if($user_task){
+            $user_task->update(['reminder_at' => $reminder_at]);
+        }else{
+            $task = Task::find($task_id);
+            $user_task = $task -> replicate();
+            $user_task['user_id']=auth()->id();
+            $user_task['task_id']=$task_id;
+            $user_task['reminder_at']=$reminder_at;
+            $user_task->save();
+        }
+        $this->current_task = $user_task;
     }
 }
